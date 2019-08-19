@@ -3,6 +3,16 @@
 
 ## Important: This project is for educational purposes only and the source code shouldn't be use in production as it doesn't have good security, doesn't scale well and lacks many important features.
 
+## How to run it
+
+To run a blockchain network of 2 interconnected nodes:
+
+ - Execute `python blockchain.py -p 5000` for node 1.
+ - Execute `python blockchain.py -p 5001` for node 2.
+ - On `http://localhost:5000/configure` add `http://localhost:5001`
+ - On `http://localhost:5001/configure` add `http://localhost:5000`
+ - On `http://localhost:5000/` press Mine, or same on `http://localhost:5001/`.
+
 
 <div style="display:block;margin:auto;height:80%;width:80%">
   <img src="blockchain-simulation.gif">
