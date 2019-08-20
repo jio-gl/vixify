@@ -37,12 +37,14 @@ import requests
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
-
+from vdf import vdf_execute, vdf_verify, vdf_prime
 
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
 # Each difficulty is 4 zero bits on the hash target, so 5*4=20 is good, but 6*4=24 is too many seconds for testing.
 MINING_DIFFICULTY = 5
+TIME_MINING_DIFFICULTY = 99999
+USE_PROOF_OF_TIME = True
 
 
 class Blockchain:
@@ -114,7 +116,9 @@ class Blockchain:
                 'timestamp': time(),
                 'transactions': self.transactions,
                 'nonce': nonce,
-                'previous_hash': previous_hash}
+                'previous_hash': previous_hash,
+                'miner_id': self.node_id,
+                }
 
         # Reset the current list of transactions
         self.transactions = []
@@ -146,15 +150,42 @@ class Blockchain:
 
         return nonce
 
+    def vdf_input(self,last_hash,node_id=None):
+        if node_id == None:
+            node_id = self.node_id
+        
+        vdf_input = (str(self.transactions)+str(last_hash)+str(node_id)).encode()
+        vdf_input_hash = hashlib.sha256(vdf_input).hexdigest()
+        vdf_input_integer = int(vdf_input_hash, 16) % vdf_prime
+        return vdf_input_integer
 
-    def valid_proof(self, transactions, last_hash, nonce, difficulty=MINING_DIFFICULTY):
+    def proof_of_time(self):
+        """
+        Proof of time algorithm
+        """
+        last_block = self.chain[-1]
+        last_hash = self.hash(last_block)
+
+        # VDF input
+        vdf_input_integer = self.vdf_input(last_hash)
+
+        nonce = vdf_execute(vdf_input_integer,TIME_MINING_DIFFICULTY)
+        return nonce
+
+
+    def valid_proof(self, transactions, last_hash, nonce, miner_id, difficulty=MINING_DIFFICULTY):
         """
         Check if a hash value satisfies the mining conditions. This function is used within the proof_of_work function.
         """
-        guess = (str(transactions)+str(last_hash)+str(nonce)).encode()
-        guess_hash = hashlib.sha256(guess).hexdigest()
-        return guess_hash[:difficulty] == '0'*difficulty
-
+        if not USE_PROOF_OF_TIME: # use Proof-of-Work
+            guess = (str(transactions)+str(last_hash)+str(nonce)).encode()
+            guess_hash = hashlib.sha256(guess).hexdigest()
+            return guess_hash[:difficulty] == '0'*difficulty
+        else:
+            x = self.vdf_input(last_hash,miner_id)
+            t = TIME_MINING_DIFFICULTY
+            y = nonce
+            return vdf_verify(y, x, t)
 
     def valid_chain(self, chain):
         """
@@ -179,12 +210,11 @@ class Blockchain:
             transaction_elements = ['sender_address', 'recipient_address', 'value']
             transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in transactions]
 
-            if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
+            if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], block['miner_id'], MINING_DIFFICULTY):
                 return False
 
             last_block = block
             current_index += 1
-
         return True
 
     def resolve_conflicts(self):
@@ -274,7 +304,10 @@ def full_chain():
 def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.chain[-1]
-    nonce = blockchain.proof_of_work()
+    if USE_PROOF_OF_TIME:
+        nonce = blockchain.proof_of_time()
+    else:
+        nonce = blockchain.proof_of_work()
 
     # We must receive a reward for finding the proof.
     blockchain.submit_transaction(sender_address=MINING_SENDER, recipient_address=blockchain.node_id, value=MINING_REWARD, signature="")
