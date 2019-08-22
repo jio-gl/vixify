@@ -3,12 +3,12 @@
 import datetime
 import time
 
-p = 73237431696005972674723595250817150843
+p = 73237431696005972674723595250817150843 
 vdf_prime = p
 
 def sqrt_mod_p_verify(y, x, p):
     if pow(y, 2) % p == x % p:
-        return True
+        pass #return True
     else:
         return False
 
@@ -19,8 +19,9 @@ def quad_res(x, p):
 
 def mod_sqrt_op(x, p):
     if quad_res(x, p):
-        return x
+        y = pow(x, (p + 1) // 4, p)
     else:
+        x = (-x) % p
         y = pow(x, (p + 1) // 4, p)
     return y
 
@@ -56,8 +57,8 @@ def vdf_verify(y,x,t):
 if __name__ == '__main__':
 
     print ('started')
-    x = 35419308290030269702074013462993892045 #612 #8080
-    x = x % p
+    x = 808080818080
+    x = x % (p)
     t = 99999
     start = time.time()
     y = mod_op(x, t)

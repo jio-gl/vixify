@@ -43,7 +43,7 @@ MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
 # Each difficulty is 4 zero bits on the hash target, so 5*4=20 is good, but 6*4=24 is too many seconds for testing.
 MINING_DIFFICULTY = 5
-TIME_MINING_DIFFICULTY = 99999
+TIME_MINING_DIFFICULTY = 10000
 USE_PROOF_OF_TIME = True
 
 
@@ -154,9 +154,13 @@ class Blockchain:
         if node_id == None:
             node_id = self.node_id
         
+        print("DEBUG: TXs = %s" % str(self.transactions))
+        print("DEBUG: last_hash = %s" % str(last_hash))
+        print("DEBUG: node_id = %s" % str(node_id))
         vdf_input = (str(self.transactions)+str(last_hash)+str(node_id)).encode()
         vdf_input_hash = hashlib.sha256(vdf_input).hexdigest()
         vdf_input_integer = int(vdf_input_hash, 16) % vdf_prime
+        print("DEBUG: vdf_input_integer = %d" % vdf_input_integer)
         return vdf_input_integer
 
     def proof_of_time(self):
@@ -169,7 +173,9 @@ class Blockchain:
         # VDF input
         vdf_input_integer = self.vdf_input(last_hash)
 
+        print("DEBUG: Mining sequential VDF (Sloth) ...")
         nonce = vdf_execute(vdf_input_integer,TIME_MINING_DIFFICULTY)
+        print("DEBUG: Generated NONCE = %d" % nonce)
         return nonce
 
 
@@ -184,8 +190,11 @@ class Blockchain:
         else:
             x = self.vdf_input(last_hash,miner_id)
             t = TIME_MINING_DIFFICULTY
+            print("DEBUG: Checking NONCE = %d" % nonce)
             y = nonce
-            return vdf_verify(y, x, t)
+            verified = vdf_verify(y, x, t)
+            print("DEBUG: Valid Block = %s" % str(verified))
+            return verified
 
     def valid_chain(self, chain):
         """
