@@ -1,6 +1,6 @@
 # Vixify Blockchain
 
-A modern pure Proof-of-Stake blockchain based on VDFs and VRFs. 
+A modern pure Proof-of-Stake blockchain based on a verifiable delay functions (VDF) and a verifiable random function (VRF). 
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
