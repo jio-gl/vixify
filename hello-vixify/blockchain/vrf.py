@@ -7,9 +7,12 @@ import binascii
 import operator
 import math
 import sys
+import base64
+import binascii
 from sys import argv
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
 
 def concat_bytes(a,b):
     return b"".join([a, b])
@@ -146,6 +149,14 @@ def VRF_verifying(public_key, alpha, pi, k):
     else:
         return "INVALID"
 
+def pem2hex(pem):
+    pem = pem.replace('\n-----END PUBLIC KEY-----\n','')
+    pem = pem.replace('-----BEGIN PUBLIC KEY-----\n','')
+    return base64.b64decode(pem).hex()
+
+def der2hex(der):
+    return binascii.hexlify(der)
+
 if __name__ == "__main__":
     if len(argv) < 2:
         print ("USAGE: python RSA_VRF.py [alpha]")
@@ -161,6 +172,7 @@ if __name__ == "__main__":
     e = public_numbers.e
     d = private_numbers.d
     k = 20
+
     #public_key = RsaPublicKey(n, e)
     #private_key = RsaPrivateKey(n, d)
     #alpha = " ".join(argv[1:])
@@ -175,3 +187,4 @@ if __name__ == "__main__":
     #print("K:" + k)
 
     #print(VRF_verifying(public_key, alpha, pi, k))
+

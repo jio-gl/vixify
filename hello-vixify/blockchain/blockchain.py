@@ -150,20 +150,21 @@ class Blockchain:
 
         return nonce
 
-    def vdf_input(self,last_hash,node_id=None):
+    def vdf_input(self,last_hash,node_id=None, add_vrf=True):
         if node_id == None:
             node_id = self.node_id
         
         print("DEBUG: TXs = %s" % str(self.transactions))
         print("DEBUG: last_hash = %s" % str(last_hash))
         print("DEBUG: node_id = %s" % str(node_id))
+
         vdf_input = (str(self.transactions)+str(last_hash)+str(node_id)).encode()
         vdf_input_hash = hashlib.sha256(vdf_input).hexdigest()
         vdf_input_integer = int(vdf_input_hash, 16) % vdf_prime
         print("DEBUG: vdf_input_integer = %d" % vdf_input_integer)
-        return vdf_input_integer
+        return vdf_input_integer#, 0 #node_vrf_seed
 
-    def proof_of_time(self):
+    def proof_of_time(self): # proof_of_random_time()
         """
         Proof of time algorithm
         """
@@ -173,10 +174,21 @@ class Blockchain:
         # VDF input
         vdf_input_integer = self.vdf_input(last_hash)
 
+        # adding VRF (WIP) 
+        #node_vrf_private_key = self.get_vrf_private_key()
+        #node_vrf_seed = VRF_Hash(node_vrf_private_key, last_hash)
+        # Calcule VDF Steps needed.
+        #node_stake = self.get_node_stake()
+        #node_vdf_steps = seed_to_slots(node_stake, node_vrf_seed)
+
+        #node_vrf_private_key = self.get_vrf_private_key()
+        #hashed_vdf_input = VRF_prove(node_vrf_private_key, vdf_input_integer, k)
+
         print("DEBUG: Mining sequential VDF (Sloth) ...")
+        #nonce = vdf_execute(vdf_input_integer,node_vdf_steps) # VRF version
         nonce = vdf_execute(vdf_input_integer,TIME_MINING_DIFFICULTY)
         print("DEBUG: Generated NONCE = %d" % nonce)
-        return nonce
+        return nonce #, node_vrf_seed # with this
 
 
     def valid_proof(self, transactions, last_hash, nonce, miner_id, difficulty=MINING_DIFFICULTY):
