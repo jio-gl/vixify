@@ -161,9 +161,17 @@ if __name__ == "__main__":
     e = public_numbers.e
     d = private_numbers.d
     k = 20
-    public_key = RsaPublicKey(n, e)
-    private_key = RsaPrivateKey(n, d)
-    alpha = " ".join(argv[1:])
-    pi = VRF_prove(private_key, alpha, k)
-    beta = VRF_proof2hash(pi)
-    print(VRF_verifying(public_key, alpha, pi, k))
+    #public_key = RsaPublicKey(n, e)
+    #private_key = RsaPrivateKey(n, d)
+    #alpha = " ".join(argv[1:])
+    #pi = VRF_prove(private_key, alpha, k)
+    #beta = VRF_proof2hash(pi)
+
+    print("Public:"+ str(public_key))
+    print("Private:" + str(private_key))
+    print("n:" + str(n))
+    print("e:" + str(e))
+    print("d:" + str(d))
+    #print("K:" + k)
+
+    #print(VRF_verifying(public_key, alpha, pi, k))
