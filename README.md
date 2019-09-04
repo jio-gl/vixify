@@ -22,7 +22,7 @@ Vixify Blockchain has the following features:
 
 Verifiable delays functions (VDFs) are essentialy cryptographic hash functions computing several steps of computation that cannot be paralelized but the computation can be verified much faster, or very fast. They have been proposed as solution to energy inefficient parallelizable Proof-of-Work consensus because of their non-paralelizable properties but they raised some concerns regading winner-takes-all scenarios for nodes with very fast specialized hardware, such as ASIC hardware. Under certain speed assumptions of the players we can handle the winner-takes-all scenarios, so we don't loose the fairness.
 
-In more detail, a VDF that implements a function *X → Y* is a tuple of three algorithms [1]:
+In more detail, a VDF is implemented by a tuple of three algorithms [1]:
 
 * *VDFSetup(λ, T) → pp* is a randomized algorithm that takes a security parameter *λ* and a time
 bound *T*, and outputs public parameter *pp*,
@@ -30,15 +30,15 @@ bound *T*, and outputs public parameter *pp*,
 * *VDFVerify(pp, x, y, π) → {accept, reject}* outputs accept if *y* is the correct evaluation of the VDF
 on input *x*.
 
-Verifiable random functions (VRFs) such as *Hsk()* defined using a public-key pair *(sk, pk)* have the property that using a private key *sk* allows to hash a plain-text *s* into a hash *h* that can be verified using a public key *pk*.
+Verifiable random functions (VRFs) are defined using a public-key pair *(VK,SK)* and have the property that using a private key *SK* allows to hash a plain-text *x* into a hash *y* that can be verified using a public or verification key *VK*.
 
-VRFs are being popularized these days by the Algorand Blockchain project, although they use voting and do not use VDF as part of their consensus algorithm.
+VRFs are being popularized and use for leader-selection by the Algorand Blockchain project, although they use voting for Byzantine Fault-tolerance and do not use VDF as part of their consensus algorithm.
 
-VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms Keygen, Evaluate, and Verify:
+VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *VRFKeygen*, *VRFEvaluate*, and *VRFVerify*:
 
- - Keygen(r) → (VK, SK). On a random input, the key generation algorithm produces a verification key VK and a secret key SK pair.
- - Evaluate(SK, X) → (Y, ⍴). The evaluation algorithm takes as input the secret key SK, a message X and produces a pseudorandom output string Y and a proof ⍴.
- - Verify(VK, X, Y, ⍴) → 0/1. The verification algorithm takes as input the verification key VK, the message X, the output Y and the proof ⍴. It outputs 1 if and only if it verifies that Y is the output produced by the evaluation algorithm on inputs SK and X.
+ - *VRFKeygen(r) → (VK, SK)*. On a random input, the key generation algorithm produces a verification key *VK* and a secret key *SK* pair.
+ - *VRFEvaluate(SK, x) → (y, ⍴)*. The evaluation algorithm takes as input the secret key *SK*, a message *X* and produces a pseudorandom output string *Y* and a proof *⍴*.
+ - *Verify(VK, x, y, ⍴) → {accept, reject}*. The verification algorithm takes as input the verification key *VK*, the message *x*, the output *Y* and the proof *⍴*. It outputs *accept* if and only if it verifies that *Y* is the output produced by the evaluation algorithm on inputs SK and X.
 
 ### Installation
 
