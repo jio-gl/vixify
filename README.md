@@ -40,7 +40,7 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *V
  - *VRFEvaluate(SK, x) → (y, ⍴)*. The evaluation algorithm takes as input the secret key *SK*, a message *X* and produces a pseudorandom output string *Y* and a proof *⍴*.
  - *Verify(VK, x, y, ⍴) → {accept, reject}*. The verification algorithm takes as input the verification key *VK*, the message *x*, the output *Y* and the proof *⍴*. It outputs *accept* if and only if it verifies that *Y* is the output produced by the evaluation algorithm on inputs SK and X.
 
-### Installation
+## Installation
 
 Vixify requires [Python ](https://python.org/) v3+ to run.
 
