@@ -9,19 +9,22 @@ from cryptography.hazmat.primitives import serialization
 def generate():
     keys = RSA.generate(2048, None,None)
 
-    print_line(str(keys.publickey()))
-    print_line(str(keys.exportKey('PEM')))
-    print_line(str(keys.has_private()))
+    #print_line(str(keys.publickey()))
+    #print_line(str(keys.exportKey('PEM')))
+    #print_line(str(keys.has_private()))
 
     #---------------------
 
 
 
-    # Writes a key in PEM format to disk
-    #key = RSA.generate(2048)
-    #f = open('mykey.pem', 'wb')
-    #f.write(keys.exportKey('PEM'))
-    #f.close()
+    #Writes a key in PEM format to disk
+    f = open('mykey.pem', 'wb')
+    pk= keys.exportKey('PEM')
+    RsaKey publick = keys.publickey()
+    print(publick)
+    f.write(pk)
+
+    f.close()
 
     #Loads the key from disk
     with open("mykey.pem", "rb") as key_file:
