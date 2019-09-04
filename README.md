@@ -54,6 +54,8 @@ To see the differences between Nakamoto Consensus and Vixify Consensus check the
 
 ![Nakamoto Consensus diagram](https://i.ibb.co/QYsqKDK/Vixify-Consensus.png "Nakamoto Consensus diagram")
 
+Notice that the overall structure is very similar but Vixify is more complex because we use the assymmetric keys for VRF Pseudo-randomness and also two functions to generate and verify VDF outputs.
+
 ![Vixify Consensus diagram](https://i.ibb.co/vk02TGG/Vixify-Consensus2.png "Vixify Consensus diagram")
 
 ## Installation
