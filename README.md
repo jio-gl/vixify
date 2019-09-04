@@ -54,6 +54,7 @@ To see the differences between Nakamoto Consensus and Vixify Consensus check the
 
 ![Nakamoto Consensus diagram](https://i.ibb.co/QYsqKDK/Vixify-Consensus.png "Nakamoto Consensus diagram")
 
+![Vixify Consensus diagram](https://i.ibb.co/vk02TGG/Vixify-Consensus2.png "Vixify Consensus diagram")
 
 ## Installation
 
