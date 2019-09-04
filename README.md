@@ -16,7 +16,7 @@ Vixify Blockchain has the following features:
 * Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder. Under certain chip technologies the design if secure (for example, no miner has a chip technology that is x3 or x4 faster than the current state of the art in commercial chips).
 * Secure - Using a verifiable random function (VRF) allows next-block miner to be unpredictable, discouraging attacks on stakeholders nodes.
 * Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
-* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
+* Scaling - because block time standard deviation is very small we have predictable block times (beyond average block time), this encourages synchronicity (most of the time) and better scaling of block sizes and transactions per second.
 
 ## What are VDFs and VRFs (VXFs!)
 
