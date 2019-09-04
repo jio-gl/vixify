@@ -40,6 +40,16 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *V
  - *VRFEvaluate(SK, x) → (y, ⍴)*. The evaluation algorithm takes as input the secret key *SK*, a message *X* and produces a pseudorandom output string *Y* and a proof *⍴*.
  - *Verify(VK, x, y, ⍴) → {accept, reject}*. The verification algorithm takes as input the verification key *VK*, the message *x*, the output *Y* and the proof *⍴*. It outputs *accept* if and only if it verifies that *Y* is the output produced by the evaluation algorithm on inputs SK and X.
 
+## Vixify Consensus
+
+Vixify Blockchain has a consensus algorithm that has very similar properties to Nakamoto Consensus, because is based on what we call: Synthetic Proof-of-Work. We define the later as:
+
+1. To start mining and competing *miners have to invest money*. On our case the need to hold some special coin stake on their coinbase wallet, in Nakamoto Consensus miners invest in special powerful hardware.
+2. Depending on know much the invest they will have to also invest time. The *invest time inversally proportial to their money investment*.
+3. Miners *run a timer with random time and the winner is the one with the smallest time*. In Vixify Consensus a private random timer is generated using the VRF and the VDF functions. On Nakamoto Consensus, looking for the pre-image generated an specially difficult hash has this property of a *random timer*.
+4. Miners don't know if their mined block or whose block will be chosen for consensus. *Next block proposer is not predictable*.
+5. Miners might have some probabilistic hint that they are going to be the next block proposer but they are never certain, unless they have more than 50% of the stake and then they can start to do some attacks on the blockchain and eventually getting 100% of the stake and total control of the blockchain.
+
 ## Installation
 
 Vixify requires [Python ](https://python.org/) v3+ to run.
