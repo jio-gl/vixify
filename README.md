@@ -58,6 +58,8 @@ Notice that the overall structure is very similar but Vixify is more complex bec
 
 ![Vixify Consensus diagram](https://i.ibb.co/vk02TGG/Vixify-Consensus2.png "Vixify Consensus diagram")
 
+I think it is better understood now. The important thing is that to generate the number of T steps of the VDF only use: a) the Prev Block Hash, the private key SK of the miner, and b) the stake *s* of the miner. In this way the only attack that the Miner can make is to generate many wallets and keys wanting to move the Stake to another wallet with another secret key SK. But that attack is very cumbersome. That is, when you find a SK that serves to trout something then you have to transfer the Stake to that wallet and lose the opportunity because you must put a transaction in the next block.
+
 ## Installation
 
 Vixify requires [Python ](https://python.org/) v3+ to run.
