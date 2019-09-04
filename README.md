@@ -50,6 +50,11 @@ Vixify Blockchain has a consensus algorithm that has very similar properties to 
 4. **Block Proposer is Unpredictable**: Miners (with less than 50% of the stake) don't know if their mined block or whose block will be chosen for consensus. *Next block proposer is not predictable*.
 5. **Block Proposer Chances are Predictable**: Miners might have some probabilistic hint that they are going to be the next block proposer but they are never certain, unless they have more than 50% of the stake and then they can start to do some attacks on the blockchain and eventually getting 100% of the stake and total control of the blockchain.
 
+To see the differences between Nakamoto Consensus and Vixify Consensus check the following diagrams:
+
+![Nakamoto Consensus diagram](https://i.ibb.co/tmBQTTB/Nakamoto-Consensus.png "Nakamoto Consensus diagram")
+
+
 ## Installation
 
 Vixify requires [Python ](https://python.org/) v3+ to run.
