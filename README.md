@@ -8,7 +8,17 @@ A modern pure Proof-of-Stake blockchain based on a verifiable delay functions (V
 
 Vixify is a blockchain adopting a pure Proof-of-Stake consensus protocol based on a verifiable random function (VRF) and a verifiable delay function (VDF) that has the following properties: a) all addresses with a positive stake can participate in consensus; b) is fair regarding the stake and the distribution of rewards; b) is tolerant to several classic attacks such as Sybil attacks, "Nothing-at-stake" attacks and "Winner-takes-all" attacks.
 
-##  VDFs and VRFs (VXFs!)
+## Blockchain Features
+
+Vixify Blockchain has the following features:
+
+* Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
+* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
+* Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
+* Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
+* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
+
+## What are VDFs and VRFs (VXFs!)
 
 Verifiable delays functions (VDFs) are essentialy cryptographic hash functions computing several steps of computation that cannot be paralelized but the computation can be verified much faster, or very fast. They have been proposed as solution to energy inefficient parallelizable Proof-of-Work consensus because of their non-paralelizable properties but they raised some concerns regading winner-takes-all scenarios for nodes with very fast specialized hardware, such as ASIC hardware. Under certain speed assumptions of the players we can handle the winner-takes-all scenarios, so we don't loose the fairness.
 
@@ -29,16 +39,6 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms Ke
  - Keygen(r) → (VK, SK). On a random input, the key generation algorithm produces a verification key VK and a secret key SK pair.
  - Evaluate(SK, X) → (Y, ⍴). The evaluation algorithm takes as input the secret key SK, a message X and produces a pseudorandom output string Y and a proof ⍴.
  - Verify(VK, X, Y, ⍴) → 0/1. The verification algorithm takes as input the verification key VK, the message X, the output Y and the proof ⍴. It outputs 1 if and only if it verifies that Y is the output produced by the evaluation algorithm on inputs SK and X.
-
-### Tech
-
-Vixify Blockchain has the following features:
-
-* Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
-* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
-* Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
-* Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
-* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
 
 ### Installation
 
