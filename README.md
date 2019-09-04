@@ -12,6 +12,12 @@ Vixify is a blockchain adopting a pure Proof-of-Stake consensus protocol based o
 
 Verifiable delays functions (VDFs) such as *Ht()* are essentialy cryptographic hash functions computing *t* steps of computation that cannot be paralelized but the computation can be verified much faster, or very fast. They have been proposed as solution to energy inefficient parallelizable Proof-of-Work consensus because of their non-paralelizable properties but they raised some concerns regading winner-takes-all scenarios for nodes with very fast specialized hardware, such as ASIC hardware. Under certain speed assumptions of the players we can handle the winner-takes-all scenarios, so we don't loose the fairness.
 
+In more detail, a VDF that implements a function X → Y is a tuple of three algorithms [1]:
+• Setup(λ, T) → pp is a randomized algorithm that takes a security parameter λ and a time
+bound T, and outputs public parameters pp,
+• Eval(pp, x) → (y, π) takes an input x ∈ X and outputs a y ∈ Y and a proof π.
+• Verify(pp, x, y, π) → {accept, reject} outputs accept if y is the correct evaluation of the VDF
+on input x.
 
 Verifiable random functions (VRFs) such as *Hsk()* defined using a public-key pair *(sk, pk)* have the property that using a private key *sk* allows to hash a plain-text *s* into a hash *h* that can be verified using a public key *pk*.
 
@@ -52,3 +58,7 @@ For production environments...
 $ pip install 
 $ blabl apython
 ```
+
+### References
+
+[1] Dan Boneh, Benedikt Bunz, Ben Fisch, "A Survey of Two Verifiable Delay Functions", August 22, 2018,  https://crypto.stanford.edu/~dabo/pubs/papers/VDFsurvey.pdf
