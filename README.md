@@ -52,7 +52,7 @@ Vixify Blockchain has a consensus algorithm that has very similar properties to 
 
 To see the differences between Nakamoto Consensus and Vixify Consensus check the following diagrams:
 
-![Nakamoto Consensus diagram](https://i.ibb.co/tmBQTTB/Nakamoto-Consensus.png "Nakamoto Consensus diagram")
+![Nakamoto Consensus diagram](https://i.ibb.co/DbkTvs6/Nakamoto-Consensus3.png "Nakamoto Consensus diagram")
 
 
 ## Installation
