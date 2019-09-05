@@ -28,6 +28,7 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms Ke
 Vixify Blockchain has the following features:
 
 * Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
+* Catastrophic Failure-tolerant - supports catastrophic >50% stake failure or network fragmentation, unlike PBFT Proof-of-Stake blockchains that stop working under catastrophic conditions.
 * Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
 * Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
 * Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
