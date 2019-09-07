@@ -1,55 +1,55 @@
-# Blockchain Python tutorial
-* Source Code for my blog post: [A Practical Introduction to Blockchain with Python](http://adilmoujahid.com/posts/2018/03/intro-blockchain-bitcoin-python/)
+# Vixify Blockchain
 
-## Important: This project is for educational purposes only and the source code shouldn't be use in production as it doesn't have good security, doesn't scale well and lacks many important features.
+A modern pure Proof-of-Stake blockchain based on a verifiable delay functions (VDF) and a verifiable random function (VRF). 
 
-## How to run it
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-To run a blockchain network of 2 interconnected nodes:
+## Summary
 
- - Execute `python blockchain.py -p 5000` for node 1.
- - Execute `python blockchain.py -p 5001` for node 2.
- - On `http://localhost:5000/configure` add `http://localhost:5001`
- - On `http://localhost:5001/configure` add `http://localhost:5000`
- - On `http://localhost:5000/` press Mine, or same on `http://localhost:5001/`.
+Vixify is a blockchain adopting a pure Proof-of-Stake consensus protocol based on a verifiable random function (VRF) and a verifiable delay function (VDF) that has the following properties: a) all addresses with a positive stake can participate in consensus; b) is fair regarding the stake and the distribution of rewards; b) is tolerant to several classic attacks such as Sybil attacks, "Nothing-at-stake" attacks and "Winner-takes-all" attacks.
 
+##  VDFs and VRFs (VXFs!)
 
-<div style="display:block;margin:auto;height:80%;width:80%">
-  <img src="blockchain-simulation.gif">
-</div>
-
-The github repository contains a basic implementation of a blockchain and its client using Python. This blockchain has the following features:
-
-- Possibility of adding multiple nodes to the blockchain
-- Proof of Work (PoW)
-- Simple conflict resolution between nodes
-- Transactions with RSA encryption
-
-The blockchain client has the following features:
-
-- Wallets generation using Public/Private key encryption (based on RSA algorithm)
-- Generation of transactions with RSA encryption 
-
-This github repository also contains 2 dashboards: 
-
-- "Blockchain Frontend" for miners 
-- "Blockchain Client" for users to generate wallets and send coins 
+Verifiable delays functions (VDFs) such as *Ht()* are essentialy cryptographic hash functions computing *t* steps of computation that cannot be paralelized but the computation can be verified much faster, or very fast. They have been proposed as solution to energy inefficient parallelizable Proof-of-Work consensus because of their non-paralelizable properties but they raised some concerns regading winner-takes-all scenarios for nodes with very fast specialized hardware, such as ASIC hardware. Under certain speed assumptions of the players we can handle the winner-takes-all scenarios, so we don't loose the fairness.
 
 
-# Dependencies
+Verifiable random functions (VRFs) such as *Hsk()* defined using a public-key pair *(sk, pk)* have the property that using a private key *sk* allows to hash a plain-text *s* into a hash *h* that can be verified using a public key *pk*.
 
-- Works with ```Python 3.6``` 
-- [Anaconda's Python distribution](https://www.continuum.io/downloads) contains all the dependencies for the code to run.
+VRFs are being popularized these days by the Algorand Blockchain project, although they use voting and do not use VDF as part of their consensus algorithm.
 
-# How to run the code
+VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms Keygen, Evaluate, and Verify:
 
-1. To start a blockchain node, go to ```blockchain``` folder and execute the command below:
-```python blockchain.py -p 5000```
-2. You can add a new node to blockchain by executing the same command and specifying a port that is not already used. For example, ```python blockchain.py -p 5001```
-3. TO start the blockchain client, go to ```blockchain_client``` folder and execute the command below:
-```python blockchain_client.py -p 8080```
-4. You can access the blockchain frontend and blockchain client dashboards from your browser by going to localhost:5000 and localhost:8080
+ - Keygen(r) → (VK, SK). On a random input, the key generation algorithm produces a verification key VK and a secret key SK pair.
+ - Evaluate(SK, X) → (Y, ⍴). The evaluation algorithm takes as input the secret key SK, a message X and produces a pseudorandom output string Y and a proof ⍴.
+ - Verify(VK, X, Y, ⍴) → 0/1. The verification algorithm takes as input the verification key VK, the message X, the output Y and the proof ⍴. It outputs 1 if and only if it verifies that Y is the output produced by the evaluation algorithm on inputs SK and X.
 
+### Tech
 
+Vixify Blockchain has the following features:
 
-# Visit my Blog : http://adilmoujahid.com
+* Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
+* Catastrophic Failure-tolerant - supports catastrophic >50% stake failure or network fragmentation, unlike PBFT Proof-of-Stake blockchains that stop working under catastrophic conditions.
+* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
+* Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
+* Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
+* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
+
+### Installation
+
+Vixify requires [Python ](https://python.org/) v3+ to run.
+
+Install the dependencies and devDependencies and start the server.
+
+```sh
+$ cd bla
+$ python install -d
+$ bla bla
+```
+
+For production environments...
+
+```sh
+
+$ pip install 
+$ blabl apython
+```
