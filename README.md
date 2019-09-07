@@ -13,8 +13,9 @@ Vixify is a blockchain adopting a pure Proof-of-Stake consensus protocol based o
 Vixify Blockchain has the following features:
 
 * Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
-* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder. Under certain chip technologies the design if secure (for example, no miner has a chip technology that is x3 or x4 faster than the current state of the art in commercial chips).
+* Energy-efficient Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder. Under certain chip technologies the design if secure (for example, no miner has a chip technology that is x3 or x4 faster than the current state of the art in commercial chips).
 * Secure - Using a verifiable random function (VRF) allows next-block miner to be unpredictable, discouraging attacks on stakeholders nodes.
+* Catastrophic Failure-tolerant - supports catastrophic >50% stake failure or network fragmentation, unlike PBFT Proof-of-Stake blockchains that stop working under catastrophic conditions.
 * Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
 * Scaling - because block time standard deviation is very small we have predictable block times (beyond average block time), this encourages synchronicity (most of the time) and better scaling of block sizes and transactions per second.
 
