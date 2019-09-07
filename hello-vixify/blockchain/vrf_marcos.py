@@ -6,6 +6,11 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa as rsa2
 from cryptography.hazmat.primitives import serialization
 
+import vrf as vrf
+RsaPublicKey = vrf.RsaPublicKey
+RsaPrivateKey = vrf.RsaPrivateKey
+VRF_Prove = vrf.VRF_prove
+
 def generate():
     keys = RSA.generate(2048, None,None)
 
@@ -20,8 +25,8 @@ def generate():
     #Writes a key in PEM format to disk
     f = open('mykey.pem', 'wb')
     pk= keys.exportKey('PEM')
-    RsaKey publick = keys.publickey()
-    print(publick)
+    #RsaKey publick = keys.publickey()
+    #print(publick)
     f.write(pk)
 
     f.close()
@@ -49,7 +54,13 @@ def generate():
     print("n:" + str(n))
     print("e:" + str(e))
     print("d:" + str(d))
+    alpha = ""+"bla"
+    k = 20
 
+    vrf_public_key = RsaPublicKey(n, e)
+    vrf_private_key = RsaPrivateKey(n, d)
+
+    pi = vrf.VRF_prove(vrf_private_key, alpha, k)
 
     #print_line(str(keys.keydata.g)
     return 1

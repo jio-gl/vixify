@@ -38,6 +38,13 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
 from vdf import vdf_execute, vdf_verify, vdf_prime
+import vrf as vrf
+RsaPublicKey = vrf.RsaPublicKey
+RsaPrivateKey = vrf.RsaPrivateKey
+VRF_Prove = vrf.VRF_prove
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
@@ -50,7 +57,6 @@ USE_PROOF_OF_TIME = True
 class Blockchain:
 
     def __init__(self):
-        
         self.transactions = []
         self.chain = []
         self.nodes = set()
@@ -58,6 +64,39 @@ class Blockchain:
         self.node_id = str(uuid4()).replace('-', '')
         #Create genesis block
         self.create_block(0, '00')
+        print('Initializing blockchain...')
+        self.create_rsa_keys()
+
+    def create_rsa_keys(self):
+        print('Creating RSA keys...')
+        self.keys = RSA.generate(2048, None, None)
+
+
+    def get_vrf_private_key(self):
+        pem_private_key = self.keys.exportKey('PEM')
+        hazmat_private_key = serialization.load_pem_private_key(pem_private_key, password=None, backend=default_backend())
+        #hazmat_private_key = serialization.load_pem_private_key(
+        #    key_file.read(),
+        #    password=None,
+        #    backend=default_backend()
+        #)
+
+        hazmat_public_key = hazmat_private_key.public_key()
+
+        private_numbers = hazmat_private_key.private_numbers()
+        public_numbers = hazmat_public_key.public_numbers()
+        n = public_numbers.n
+        e = public_numbers.e
+        d = private_numbers.d
+        k = 20
+
+        #public_key = RsaPublicKey(n, e)
+        # private_key = RsaPrivateKey(n, d)
+        return RsaPrivateKey(n, d)
+
+    def VRF_Hash(self, pk, last_hash):
+        k_fruta=20
+        return vrf.VRF_prove(pk, last_hash, k_fruta)
 
 
     def register_node(self, node_url):
@@ -175,8 +214,10 @@ class Blockchain:
         vdf_input_integer = self.vdf_input(last_hash)
 
         # adding VRF (WIP) 
-        #node_vrf_private_key = self.get_vrf_private_key()
-        #node_vrf_seed = VRF_Hash(node_vrf_private_key, last_hash)
+        node_vrf_private_key = self.get_vrf_private_key()
+        node_vrf_seed = self.VRF_Hash(node_vrf_private_key, last_hash)
+        print('aca vieneeee el seeed')
+        print(node_vrf_seed)
         # Calcule VDF Steps needed.
         #node_stake = self.get_node_stake()
         #node_vdf_steps = seed_to_slots(node_stake, node_vrf_seed)
