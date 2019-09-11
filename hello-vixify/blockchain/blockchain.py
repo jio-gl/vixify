@@ -45,6 +45,8 @@ MINING_REWARD = 1
 MINING_DIFFICULTY = 5
 TIME_MINING_DIFFICULTY = 10000
 USE_PROOF_OF_TIME = True
+DEFAULT_DEBUG_STAKE = 25000
+TOTAL_COINS = 100000
 
 
 class Blockchain:
@@ -328,7 +330,7 @@ def mine():
     if USE_PROOF_OF_TIME:
         nonce = blockchain.proof_of_time()
     else:
-        nonce = blockchain.proof_of_work()
+        nonce = blockchain.proo f_of_work()
 
     # We must receive a reward for finding the proof.
     blockchain.submit_transaction(sender_address=MINING_SENDER, recipient_address=blockchain.node_id, value=MINING_REWARD, signature="")
