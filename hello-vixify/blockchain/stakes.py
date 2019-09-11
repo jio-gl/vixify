@@ -5,7 +5,7 @@
 import random,time
 from collections import Counter
 
-STAKING_VDF_QUANTUM = 1000
+STAKING_VDF_QUANTUM = 10000
 
 def genBinaryStakes1(n=10, minStakeExp=3, maxStakeExp=10):
     ret = []
