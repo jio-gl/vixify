@@ -6,6 +6,7 @@ import random,time
 from collections import Counter
 
 STAKING_VDF_QUANTUM = 10000
+VDF_PROTECTION_BASE = 3
 
 def genBinaryStakes1(n=10, minStakeExp=3, maxStakeExp=10):
     ret = []
@@ -98,6 +99,24 @@ def experimentError(stakes):
 
 
 
+def slotByStakeDiscreteProtected(coins: int, totalCoins: int, vrfSeed: int):
+    slot = slotByStakeDiscrete(coins, totalCoins, vrfSeed)
+    return pow(VDF_PROTECTION_BASE,slot-1)
+
+
+def vdfStepsByStakeDiscreteProtected(coins: int, totalCoins: int, vrfSeed: int):
+    return round(slotByStakeDiscreteProtected(coins,totalCoins,vrfSeed) * STAKING_VDF_QUANTUM)
+
+
+def slotByStakeProtected(coins: int, totalCoins: int, vrfSeed: int):
+    slot = slotByStake(coins, totalCoins, vrfSeed)
+    return pow(VDF_PROTECTION_BASE,slot-1)
+
+
+def vdfStepsByStakeProtected(coins: int, totalCoins: int, vrfSeed: int):
+    return round(slotByStakeProtected(coins,totalCoins,vrfSeed) * STAKING_VDF_QUANTUM)
+
+
 def slotByStakeDiscrete(coins: int, totalCoins: int, vrfSeed: int):
     random.seed(int(vrfSeed))
     stake = float(coins) / totalCoins
@@ -120,17 +139,28 @@ def slotByStake(coins: int, totalCoins: int, vrfSeed: int):
 if __name__ == '__main__':
     
     #print (genBinaryStakes1(n=20, minStakeExp=3, maxStakeExp=10))
-    random.seed( 666 )
+    random.seed( 666 )  
     #stakes = genBinaryStakes2(n=8)
     #print (stakes)
 
     
-    for i in range(10):
-        print ('-----')
-        stakes = genStakes(n=100)
-        #stakes = genBinaryStakes2(n=64)
-        print (stakes)
-        print (experimentError(stakes))
+    #for i in range(10):
+    #    print ('-----')
+    #    stakes = genStakes(n=100)
+    #    #stakes = genBinaryStakes2(n=64)
+    #    print (stakes)
+    #    print (experimentError(stakes))
     
+    for _ in range(10):
+
+        vrf_seed = random.randint(1,100)
+        print ('VRF Miner Seed = %d'%vrf_seed)
+        slot = slotByStakeDiscrete(25, 100, vrf_seed)
+        print ('Mining Slot = %.4f' % slot)
+        pslot = pow(VDF_PROTECTION_BASE,slot-1)
+        print ('Exponential Minig Slot = %.4f' % pslot)
+        steps = round(pslot * STAKING_VDF_QUANTUM) 
+        print ('Slot Translated to VDF Steps = %d' % steps)
+        print ('='*40)
     
     
