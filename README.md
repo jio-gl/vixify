@@ -44,15 +44,7 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *V
 
 ## Vixify Consensus
 
-Vixify Blockchain has a consensus algorithm that has very similar properties to Nakamoto Consensus, because is based on what we call: Synthetic Proof-of-Work. We define the later as:
-=======
-* Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
-* Catastrophic Failure-tolerant - supports catastrophic >50% stake failure or network fragmentation, unlike PBFT Proof-of-Stake blockchains that stop working under catastrophic conditions.
-* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
-* Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
-* Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
-* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
->>>>>>> 82c703de04d30bc3febd619b486253d40e789386
+Vixify Blockchain has a consensus algorithm that has very similar properties to Nakamoto Consensus, because is based on what we call: Synthetic Proof-of-Work. We define the later as having the following properties:
 
 1. **Money Investment**: To start mining and competing *miners have to invest money*. On our case the need to hold some special coin stake on their coinbase wallet, in Nakamoto Consensus miners invest in special and powerful hardware.
 2. **Time Investment**: Depending on know much they invest they will have to also invest time. Their *time investment will be inversally proportial to their money investment*.
