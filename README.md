@@ -79,58 +79,59 @@ In theory you cannot assume synchrony but in practice you can assume some level 
 
 For example we show 10 examples of VDF steps for a miner with a stake of 25% (25 from a total of 100 coins):
 
-'''
-25 100 59
-2.0423
-3.142704039710289
-31427
-================================================================================
-25 100 84
-3.457
-14.869176712311896
-148692
-================================================================================
-25 100 5
-5.1277
-93.19946151467879
-931995
-================================================================================
-25 100 46
-1.2
-1.2457309396155172
-12457
-================================================================================
-25 100 76
-3.2316
-11.607636301634695
-116076
-================================================================================
-25 100 50
-4.4278
-43.199252985426796
-431993
-================================================================================
-25 100 47
-3.0313
-9.314861560734728
-93149
-================================================================================
-25 100 71
-3.2542
-11.899445722787153
-118994
-================================================================================
-25 100 2
-1.0458
-1.0516038162080212
-10516
-================================================================================
-25 100 47
-3.0313
-9.314861560734728
-93149
-================================================================================
-'''
+```
+VRF Miner Seed = 59
+Mining Slot = 2
+Exponential Minig Slot = 3
+Slot Translated to VDF Steps = 31427
+========================================
+VRF Miner Seed = 84
+Mining Slot = 3
+Exponential Minig Slot = 14
+Slot Translated to VDF Steps = 148692
+========================================
+VRF Miner Seed = 5
+Mining Slot = 5
+Exponential Minig Slot = 93
+Slot Translated to VDF Steps = 931995
+========================================
+VRF Miner Seed = 46
+Mining Slot = 1
+Exponential Minig Slot = 1
+Slot Translated to VDF Steps = 12457
+========================================
+VRF Miner Seed = 76
+Mining Slot = 3
+Exponential Minig Slot = 11
+Slot Translated to VDF Steps = 116076
+========================================
+VRF Miner Seed = 50
+Mining Slot = 4
+Exponential Minig Slot = 43
+Slot Translated to VDF Steps = 431993
+========================================
+VRF Miner Seed = 47
+Mining Slot = 3
+Exponential Minig Slot = 9
+Slot Translated to VDF Steps = 93149
+========================================
+VRF Miner Seed = 71
+Mining Slot = 3
+Exponential Minig Slot = 11
+Slot Translated to VDF Steps = 118994
+========================================
+VRF Miner Seed = 2
+Mining Slot = 1
+Exponential Minig Slot = 1
+Slot Translated to VDF Steps = 10516
+========================================
+VRF Miner Seed = 47
+Mining Slot = 3
+Exponential Minig Slot = 9
+Slot Translated to VDF Steps = 93149
+========================================
+```
+
 
 ## Installation
 
