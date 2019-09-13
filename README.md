@@ -65,10 +65,10 @@ The important thing is that to generate the number of *T* steps of the VDF only 
 
 To avoid one miner being faster than the rest and getting all the rewards the difficulty of the VDF mining must be related to the stake owned by the miner. Also, remember that to allows for network fragmentation we allow any miner to propose blocks at any time, in case the miner with the smallest VDF linear difficulty is down, another miners are allowed to jump in an propose anotherblock. So, we need to introduce an extra protection because, as we allow a second miner to jump in if a first one fails, lets miners with faster CPUs/GPUs to jump always in front of the fair proposer designated by the protocol.
 
-The idea is that there is a fixed temporal quantum and that the variable multiplier be exponential.
+The idea is that there is a fixed temporal quantum and that we introduce an exponent variable multiplier.
 That is, on the basis of the time block, the exponent is modified.
 Put the initial exponent is 1 and the mult is 2 ^ 1
-This means that to cheat you have to be the NSA and make a chip more than twice as fast as el.rrsto.
+This means that to cheat you have to be the NSA or a super-player and make a chip more than twice as fast as the rest of the miners.
 Then you are NSA winner take all you take all the blocks but the multiplier detects that the average block time was reduced then quickly increases the exponent put it to 2 then it is 2 ^ 2 = 4 and the NSA chip doesn't work anymore.
 In practice it increases by 10%, but it is the idea. Put it from 2 ^ 1 to 2 ^ 1.1 but it's the same.
 The concept is that as block time quickly controls the exponent then the exponential appearance of faster chips simply enlarges the exponential distance between slot 1 and 2, between the 2 and 3 etc.
