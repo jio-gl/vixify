@@ -35,7 +35,6 @@ Verifiable random functions (VRFs) are defined using a public-key pair *(VK,SK)*
 
 VRFs are being popularized and use for leader-selection by the Algorand Blockchain project, although they use voting for Byzantine Fault-tolerance and do not use VDF as part of their consensus algorithm.
 
-<<<<<<< HEAD
 VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *VRFKeygen*, *VRFEvaluate*, and *VRFVerify*:
 
  - *VRFKeygen(r) → (VK, SK)*. On a random input, the key generation algorithm produces a verification key *VK* and a secret key *SK* pair.
@@ -44,15 +43,7 @@ VRF syntax and properties are as follows [1]. A VRF is a triple of algorithms *V
 
 ## Vixify Consensus
 
-Vixify Blockchain has a consensus algorithm that has very similar properties to Nakamoto Consensus, because is based on what we call: Synthetic Proof-of-Work. We define the later as:
-=======
-* Proof-of-Stake - only stakeholders can participate in consensus and recieve rewards.
-* Catastrophic Failure-tolerant - supports catastrophic >50% stake failure or network fragmentation, unlike PBFT Proof-of-Stake blockchains that stop working under catastrophic conditions.
-* Single-thread Mining - Using a VDF allow the blockchain with blocks mined on a single-thread by each stakeholder.
-* Secure - Usgin a verifiable random function (VRF) allows next-block miner to be unpredictable, discouragin attacks on stakeholders nodes.
-* Ethereum-compatible - Smart Contract build in Solidity have a huge community and support.
-* Scaling - using reasonable bigger blocks and on-demand retrieval of accounts/contracts state will help scale any blockchain implementation.
->>>>>>> 82c703de04d30bc3febd619b486253d40e789386
+Vixify Blockchain has a consensus algorithm that has very similar properties to Nakamoto Consensus, because is based on what we call: Synthetic Proof-of-Work. We define the later as having the following properties:
 
 1. **Money Investment**: To start mining and competing *miners have to invest money*. On our case the need to hold some special coin stake on their coinbase wallet, in Nakamoto Consensus miners invest in special and powerful hardware.
 2. **Time Investment**: Depending on know much they invest they will have to also invest time. Their *time investment will be inversally proportial to their money investment*.
@@ -69,6 +60,78 @@ Notice that the overall structure is very similar but Vixify is more complex bec
 ![Vixify Consensus diagram](https://i.ibb.co/vk02TGG/Vixify-Consensus2.png "Vixify Consensus diagram")
 
 The important thing is that to generate the number of *T* steps of the VDF only use: a) the Previous Block Hash, b) the private key SK of the miner's wallet, and c) the stake *S* of the miner. In this way the only attack that the Miner can make is to generate many wallets and keys wanting to move the Stake to another wallet with another secret key SK. But that attack is very cumbersome. That is, when you find a SK that serves to trout something then you have to transfer the Stake to that wallet and looses the opportunity because he must put a transaction in the next block to move stake to the new wallet.
+
+## VDF linear-mining and the Fastest Chip or Winner-takes-all Attack Protection
+
+To avoid one miner being faster than the rest and getting all the rewards the difficulty of the VDF mining must be related to the stake owned by the miner. Also, remember that to allows for network fragmentation we allow any miner to propose blocks at any time, in case the miner with the smallest VDF linear difficulty is down, another miners are allowed to jump in an propose anotherblock. So, we need to introduce an extra protection because, as we allow a second miner to jump in if a first one fails, lets miners with faster CPUs/GPUs to jump always in front of the fair proposer designated by the protocol.
+
+The idea is that there is a fixed temporal quantum and that we introduce an exponent variable multiplier.
+That is, on the basis of the time block, the exponent is modified.
+Put the initial exponent is 1 and the mult is 2 ^ 1
+This means that to cheat you have to be the NSA or a super-player and make a chip more than twice as fast as the rest of the miners.
+Then you are NSA winner take all you take all the blocks but the multiplier detects that the average block time was reduced then quickly increases the exponent put it to 2 then it is 2 ^ 2 = 4 and the NSA chip doesn't work anymore.
+In practice it increases by 10%, but it is the idea. Put it from 2 ^ 1 to 2 ^ 1.1 but it's the same.
+The concept is that as block time quickly controls the exponent then the exponential appearance of faster chips simply enlarges the exponential distance between slot 1 and 2, between the 2 and 3 etc.
+The exponential part that is fixed in the hello-vixify is missing.
+The issue is that the block time could lie a bit maybe, you decided it took maybe what you should but you mine it and share it before.
+The same is difficult, you can't trick the blocktime pq much if you propagate something with timestamp of the future it would be an invalid block assuming clocks with a little bit of syncronia margin
+In theory you cannot assume synchrony but in practice you can assume some level of statistical synchrony and time delta.
+
+For example we show 10 examples of VDF steps for a miner with a stake of 25% (25 from a total of 100 coins):
+
+```
+VRF Miner Seed = 59
+Mining Slot = 2.0423
+Exponential Minig Slot = 3.1427
+Slot Translated to VDF Steps = 31427
+========================================
+VRF Miner Seed = 84
+Mining Slot = 3.4570
+Exponential Minig Slot = 14.8692
+Slot Translated to VDF Steps = 148692
+========================================
+VRF Miner Seed = 5
+Mining Slot = 5.1277
+Exponential Minig Slot = 93.1995
+Slot Translated to VDF Steps = 931995
+========================================
+VRF Miner Seed = 46
+Mining Slot = 1.2000
+Exponential Minig Slot = 1.2457
+Slot Translated to VDF Steps = 12457
+========================================
+VRF Miner Seed = 76
+Mining Slot = 3.2316
+Exponential Minig Slot = 11.6076
+Slot Translated to VDF Steps = 116076
+========================================
+VRF Miner Seed = 50
+Mining Slot = 4.4278
+Exponential Minig Slot = 43.1993
+Slot Translated to VDF Steps = 431993
+========================================
+VRF Miner Seed = 47
+Mining Slot = 3.0313
+Exponential Minig Slot = 9.3149
+Slot Translated to VDF Steps = 93149
+========================================
+VRF Miner Seed = 71
+Mining Slot = 3.2542
+Exponential Minig Slot = 11.8994
+Slot Translated to VDF Steps = 118994
+========================================
+VRF Miner Seed = 2
+Mining Slot = 1.0458
+Exponential Minig Slot = 1.0516
+Slot Translated to VDF Steps = 10516
+========================================
+VRF Miner Seed = 47
+Mining Slot = 3.0313
+Exponential Minig Slot = 9.3149
+Slot Translated to VDF Steps = 93149
+========================================
+```
+
 
 ## Installation
 
@@ -94,3 +157,5 @@ $ blabl apython
 
 [1] Dan Boneh, Benedikt Bunz, Ben Fisch, "A Survey of Two Verifiable Delay Functions", August 22, 2018,  https://crypto.stanford.edu/~dabo/pubs/papers/VDFsurvey.pdf
 [2] Dan Boneh, Joseph Bonneau, Benedikt Bunz, and Ben Fisch, "Verifiable Delay Functions" https://eprint.iacr.org/2018/601.pdf
+[3] (Minimal) Go implementation of Algorand, https://github.com/ericderegt/algorand
+[4] Implementing Algorand Agreement, https://nickgreenquist.github.io/blog/projects/2019/01/04/algorand.html
