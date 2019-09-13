@@ -82,52 +82,52 @@ For example we show 10 examples of VDF steps for a miner with a stake of 25% (25
 ```
 VRF Miner Seed = 59
 Mining Slot = 2.0423
-Exponential Minig Slot = 3.1427
+Exponential Mining Slot = 3.1427
 Slot Translated to VDF Steps = 31427
 ========================================
 VRF Miner Seed = 84
 Mining Slot = 3.4570
-Exponential Minig Slot = 14.8692
+Exponential Mining Slot = 14.8692
 Slot Translated to VDF Steps = 148692
 ========================================
 VRF Miner Seed = 5
 Mining Slot = 5.1277
-Exponential Minig Slot = 93.1995
+Exponential Mining Slot = 93.1995
 Slot Translated to VDF Steps = 931995
 ========================================
 VRF Miner Seed = 46
 Mining Slot = 1.2000
-Exponential Minig Slot = 1.2457
+Exponential Mining Slot = 1.2457
 Slot Translated to VDF Steps = 12457
 ========================================
 VRF Miner Seed = 76
 Mining Slot = 3.2316
-Exponential Minig Slot = 11.6076
+Exponential Mining Slot = 11.6076
 Slot Translated to VDF Steps = 116076
 ========================================
 VRF Miner Seed = 50
 Mining Slot = 4.4278
-Exponential Minig Slot = 43.1993
+Exponential Mining Slot = 43.1993
 Slot Translated to VDF Steps = 431993
 ========================================
 VRF Miner Seed = 47
 Mining Slot = 3.0313
-Exponential Minig Slot = 9.3149
+Exponential Mining Slot = 9.3149
 Slot Translated to VDF Steps = 93149
 ========================================
 VRF Miner Seed = 71
 Mining Slot = 3.2542
-Exponential Minig Slot = 11.8994
+Exponential Mining Slot = 11.8994
 Slot Translated to VDF Steps = 118994
 ========================================
 VRF Miner Seed = 2
 Mining Slot = 1.0458
-Exponential Minig Slot = 1.0516
+Exponential Mining Slot = 1.0516
 Slot Translated to VDF Steps = 10516
 ========================================
 VRF Miner Seed = 47
 Mining Slot = 3.0313
-Exponential Minig Slot = 9.3149
+Exponential Mining Slot = 9.3149
 Slot Translated to VDF Steps = 93149
 ========================================
 ```
