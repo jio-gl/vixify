@@ -31,7 +31,7 @@ bound *T*, and outputs public parameter *pp*,
 * *VDFVerify(pp, x, y, π) → {accept, reject}* outputs accept if *y* is the correct evaluation of the VDF
 on input *x*.
 
-Verifiable random functions (VRFs) are defined using a public-key pair *(VK,SK)* and have the property that using a private key *SK* allows to hash a plain-text *x* into a hash *y* that can be verified using a public or verification key *VK*.
+Verifiable random functions (VRFs) are defined using a public-key pair *(VK,SK)* and have the property that using a private key *SK* allows to hash a plain-text *x* into a hash *y* that can be verified using a public or verification key *VK*. VRFs are more useful than just signing a hash of the data because sometimes (for example with ECDSA) using signatures gives signatures that are not unique, then allowing a malicious miner to generate many signatures to search for one that make him the block proposer, bypassing the protocol.
 
 VRFs are being popularized and use for leader-selection by the Algorand Blockchain project, although they use voting for Byzantine Fault-tolerance and do not use VDF as part of their consensus algorithm.
 
@@ -159,3 +159,4 @@ $ blabl apython
 [2] Dan Boneh, Joseph Bonneau, Benedikt Bunz, and Ben Fisch, "Verifiable Delay Functions" https://eprint.iacr.org/2018/601.pdf
 [3] (Minimal) Go implementation of Algorand, https://github.com/ericderegt/algorand
 [4] Implementing Algorand Agreement, https://nickgreenquist.github.io/blog/projects/2019/01/04/algorand.html
+[5] Cryptographic Sortition in Blockchains: the importance of VRFs https://medium.com/witnet/cryptographic-sortition-in-blockchains-the-importance-of-vrfs-ad5c20a4e018
