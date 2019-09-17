@@ -5,7 +5,7 @@
 import random,time
 from collections import Counter
 
-STAKING_VDF_QUANTUM = 10000
+STAKING_VDF_QUANTUM = 2000
 VDF_PROTECTION_BASE = 3
 
 def genBinaryStakes1(n=10, minStakeExp=3, maxStakeExp=10):
@@ -103,7 +103,7 @@ def slotByStakeDiscreteProtected(coins: int, totalCoins: int, vrfSeed: int):
     slot = slotByStakeDiscrete(coins, totalCoins, vrfSeed)
     return pow(VDF_PROTECTION_BASE,slot-1)
 
-
+# TODO: test this one.
 def vdfStepsByStakeDiscreteProtected(coins: int, totalCoins: int, vrfSeed: int):
     return round(slotByStakeDiscreteProtected(coins,totalCoins,vrfSeed) * STAKING_VDF_QUANTUM)
 
@@ -121,9 +121,12 @@ def slotByStakeDiscrete(coins: int, totalCoins: int, vrfSeed: int):
     random.seed(int(vrfSeed))
     stake = float(coins) / totalCoins
     slot = int(round(1/stake))
+    print ('DEBUG: stakes.py max slot = %d' % (slot+1))
     randomSlot = random.randint(1,slot+1)
+    print ('DEBUG: stakes.py random slot = %d' % (randomSlot))
     # Add noise to reduce prob of collision.
     randomSlot += round(random.random()/2,4)
+    print ('DEBUG: stakes.py random slot plus noise = %.4f' % (randomSlot))
     return randomSlot
 
 

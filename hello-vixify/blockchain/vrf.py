@@ -144,10 +144,7 @@ def VRF_verifying(public_key, alpha, pi, k):
     m = public_key.rsavp1(s)
     EM = i2osp(m, k-1)
     EM_ = mgf1(alpha, k-1)
-    if EM == EM_:
-        return "VALID"
-    else:
-        return "INVALID"
+    return EM == EM_
 
 def pem2hex(pem):
     pem = pem.replace('\n-----END PUBLIC KEY-----\n','')
