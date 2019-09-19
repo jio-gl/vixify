@@ -1,6 +1,6 @@
-'''
+"""
 @author: jose
-'''
+"""
 
 import random,time
 from collections import Counter

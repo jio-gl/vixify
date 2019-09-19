@@ -1,4 +1,4 @@
-'''
+"""
 title           : blockchain.py
 description     : A blockchain implemenation
 author          : Adil Moujahid
@@ -15,71 +15,59 @@ Comments        : The blockchain implementation is mostly based on [1].
                   blockchain from the dashboards
 References      : [1] https://github.com/dvf/blockchain/blob/master/blockchain.py
                   [2] https://github.com/julienr/ipynb_playground/blob/master/bitcoin/dumbcoin/dumbcoin.ipynb
-'''
+"""
+import base64
+import hashlib
+import random
+import json
+import requests
 
+import stakes
+from typing import List, Dict, Union
 from collections import OrderedDict
 
-import binascii
-
-import Crypto
-import Crypto.Random
-from Crypto.Hash import SHA
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-
-import hashlib
-import json
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
-import base64
-import struct
 
-import requests
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
+from vrf import Vrf
 from vdf import vdf_execute, vdf_verify, vdf_prime
-import vrf as vrf
-RsaPublicKey = vrf.RsaPublicKey
-RsaPrivateKey = vrf.RsaPrivateKey
-VRF_Prove = vrf.VRF_prove
-VRF_Verify = vrf.VRF_verifying
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-
-import stakes
-import random
 
 # SEED for debugging
 random.seed(666)
 
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
-# Each difficulty is 4 zero bits on the hash target, so 5*4=20 is good, but 6*4=24 is too many seconds for testing.
-MINING_DIFFICULTY = 5
 
+# Each difficulty is 4 zero bits on the hash target,
+#   so 5*4=20 is good, but 6*4=24 is too many seconds for testing.
+MINING_DIFFICULTY = 5
 USE_PROOF_OF_TIME = True
 TIME_MINING_DIFFICULTY = 10000
 DEFAULT_DEBUG_STAKE = 25000
 TOTAL_COINS = 100000
 
 
-def rawbytes(s):
+def raw_bytes(s):
     """Convert a string to raw bytes without encoding"""
-    outlist = []
+    import struct
+
+    out_list = []
     for cp in s:
         num = ord(cp)
         if num < 255:
-            outlist.append(struct.pack('B', num))
+            out_list.append(struct.pack('B', num))
         elif num < 65535:
-            outlist.append(struct.pack('>H', num))
+            out_list.append(struct.pack('>H', num))
         else:
             b = (num & 0xFF0000) >> 16
-            H = num & 0xFFFF
-            outlist.append(struct.pack('>bH', b, H))
-    return b''.join(outlist)
+            h = num & 0xFFFF
+            out_list.append(struct.pack('>bH', b, h))
+    return b''.join(out_list)
 
 
 class Blockchain:
@@ -88,85 +76,25 @@ class Blockchain:
         self.transactions = []
         self.chain = []
         self.nodes = set()
-        #Generate random number to be used as node_id
+
+        # Generate random number to be used as node_id
         self.node_id = str(uuid4()).replace('-', '')
-        #Create genesis block
-        self.create_block(0, '00')
+
+        # Create genesis block
+        genesis_block = self.create_append_block(0, '00')
+
         print('Initializing blockchain...')
-        self.create_rsa_keys()
+        self.vrf = Vrf(keys=Vrf.create_rsa_keys())      # type: Vrf
 
-
-    def create_rsa_keys(self):
-        print('Creating RSA keys...')
-        self.keys = RSA.generate(2048, None)
-
-
-
-    def get_vrf_private_key(self):
-        pem_private_key = self.keys.exportKey('PEM')
-        print ('DEBUG: exported PEM:')
-        print (str(pem_private_key))
-        print()
-        hazmat_private_key = serialization.load_pem_private_key(pem_private_key, password=None, backend=default_backend())
-        #hazmat_private_key = serialization.load_pem_private_key(
-        #    key_file.read(),
-        #    password=None,
-        #    backend=default_backend()
-        #)
-
-        hazmat_public_key = hazmat_private_key.public_key()
-
-        private_numbers = hazmat_private_key.private_numbers()
-        public_numbers = hazmat_public_key.public_numbers()
-        n = public_numbers.n
-        e = public_numbers.e
-        d = private_numbers.d
-        k = 20
-
-        #public_key = RsaPublicKey(n, e)
-        # private_key = RsaPrivateKey(n, d)
-        return RsaPrivateKey(n, d)
-
-
-    def get_vrf_public_key_pem(self):
-        return self.keys.publickey().exportKey('PEM').decode("utf-8")
-
-
-    def get_vrf_public_key(self, pem, hexlified=False):
-        # bytes to string
-        print ('DEBUG: encoding publick key:')
-        print (str(pem))
-        print ()
-        pem = pem.encode('utf-8') #rawbytes(pem)
-        
-        pem_pubic_key = pem
-        hazmat_public_key = serialization.load_pem_public_key(pem_pubic_key, backend=default_backend())
-
-        public_numbers = hazmat_public_key.public_numbers()
-        n = public_numbers.n
-        e = public_numbers.e
-
-        if hexlified:
-            return binascii.hexlify(hazmat_public_key.public_bytes)
-        else:
-            return RsaPublicKey(n, e)
-
-
-    def VRF_Hash(self, sk, data):
-        k_fruta=20
-        return vrf.VRF_prove(sk, data, k_fruta)
-
-
-    def VRF_Verify(self, pk, data, seed):
-        k_fruta=20
-        return vrf.VRF_verifying(pk, data, seed, k_fruta)
-
+    ########
+    # NODES
+    ########_b64
 
     def register_node(self, node_url):
         """
         Add a new node to the list of nodes
         """
-        #Checking node_url has valid format
+        # Checking node_url has valid format
         parsed_url = urlparse(node_url)
         if parsed_url.netloc:
             self.nodes.add(parsed_url.netloc)
@@ -176,51 +104,73 @@ class Blockchain:
         else:
             raise ValueError('Invalid URL')
 
-
-    def verify_transaction_signature(self, sender_address, signature, transaction):
-        """
-        Check that the provided signature corresponds to transaction
-        signed by the public key (sender_address)
-        """
-        public_key = RSA.importKey(binascii.unhexlify(sender_address))
-        verifier = PKCS1_v1_5.new(public_key)
-        h = SHA.new(str(transaction).encode('utf8'))
-        return verifier.verify(h, binascii.unhexlify(signature))
-
+    #######
+    # TXS
+    #######
 
     def submit_transaction(self, sender_address, recipient_address, value, signature):
         """
         Add a transaction to transactions array if the signature verified
         """
-        transaction = OrderedDict({'sender_address': sender_address, 
-                                    'recipient_address': recipient_address,
-                                    'value': value})
+        transaction = \
+            OrderedDict({
+                            'sender_address': sender_address,
+                            'recipient_address': recipient_address,
+                            'value': value
+                        })
 
-        #Reward for mining a block
+        # Reward for mining a block
         if sender_address == MINING_SENDER:
             self.transactions.append(transaction)
             return len(self.chain) + 1
-        #Manages transactions from wallet to another wallet
+
+        # Manages transactions from wallet to another wallet
         else:
-            transaction_verification = self.verify_transaction_signature(sender_address, signature, transaction)
+            transaction_verification = Blockchain.verify_transaction_signature(sender_address, signature, transaction)
             if transaction_verification:
                 self.transactions.append(transaction)
                 return len(self.chain) + 1
             else:
                 return False
 
+    @classmethod
+    def verify_transaction_signature(cls, sender_address, signature, transaction):
+        """
+        Check that the provided signature corresponds to transaction
+        signed by the public key (sender_address)
+        """
+        import binascii
+        from Crypto.Hash import SHA
+        from Crypto.PublicKey import RSA
+        from Crypto.Signature import PKCS1_v1_5
 
-    def create_block(self, nonce, previous_hash, seed=None, miner_address=None):
+        public_key = RSA.importKey(binascii.unhexlify(sender_address))
+        verifier = PKCS1_v1_5.new(public_key)
+        h = SHA.new(str(transaction).encode('utf8'))
+
+        try:
+            verifier.verify(h, binascii.unhexlify(signature))
+            return True
+
+        except ValueError:
+            return False
+
+    #########
+    # BLOCKS
+    #########
+
+    def create_append_block(self, nonce, previous_hash, seed=None, miner_address=None):
         """
         Add a block of transactions to the blockchain
         """
-        block = {'block_number': len(self.chain) + 1,
+        block = \
+            {
+                'block_number': len(self.chain) + 1,
                 'timestamp': time(),
                 'transactions': self.transactions,
                 'nonce': nonce,
-                'previous_hash': previous_hash,
-                'miner_id': self.node_id,
-                }
+                'previous_hash': previous_hash
+            }
 
         if USE_PROOF_OF_TIME:
             block['seed'] = seed
@@ -229,28 +179,21 @@ class Blockchain:
         # Reset the current list of transactions
         self.transactions = []
 
-        print ('DEBUG: appending block ...')
-        print (str(block))
+        print('DEBUG: appending block ...')
+        print(str(block))
         self.chain.append(block)
         return block
 
-
-    def hash(self, block):
-        """
-        Create a SHA-256 hash of a block
-        """
-        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
-        block_string = json.dumps(block, sort_keys=True).encode()
-        
-        return hashlib.sha256(block_string).hexdigest()
-
+    ####################
+    # VRF/VDF CONSENSUS
+    ####################
 
     def proof_of_work(self):
         """
         Proof of work algorithm
         """
         last_block = self.chain[-1]
-        last_hash = self.hash(last_block)
+        last_hash = Blockchain.hash(last_block)
 
         nonce = 0
         while self.valid_proof(self.transactions, last_hash, nonce) is False:
@@ -258,62 +201,33 @@ class Blockchain:
 
         return nonce
 
-    def vdf_input(self,last_hash,node_id=None):
-        if node_id == None:
-            node_id = self.node_id
-        
-        print("DEBUG: TXs = %s" % str(self.transactions))
-        print("DEBUG: last_hash = %s" % str(last_hash))
-        print("DEBUG: node_id = %s" % str(node_id))
-
-        vdf_input = (str(self.transactions)+str(last_hash)+str(node_id)).encode()
-        vdf_input_hash = hashlib.sha256(vdf_input).hexdigest()
-        vdf_input_integer = int(vdf_input_hash, 16) % vdf_prime
-        print("DEBUG: vdf_input_integer = %d" % vdf_input_integer)
-        return vdf_input_integer#, 0 #node_vrf_seed
-
-
-    def vdf_steps(self, coins, total, seed):
-        seedInteger = vrf.os2ip(base64.b64decode(seed))
-        return stakes.vdfStepsByStakeDiscreteProtected(coins,total,seedInteger)
-
-
-    def get_last_hash(self):
-        last_block = self.chain[-1]
-        last_hash = self.hash(last_block)
-        return last_hash
-
-
-    def proof_of_time(self): # proof_of_random_time()
+    def proof_of_time(self):    # proof_of_random_time()
         """
         Proof of time algorithm
         """
         last_block = self.chain[-1]
-        last_hash = self.hash(last_block)
+        last_hash = Blockchain.hash(last_block)
 
         # VDF input
         vdf_input_integer = self.vdf_input(last_hash)
 
-        # adding VRF (WIP) 
-        node_vrf_private_key = self.get_vrf_private_key()
-        node_vrf_seed = self.VRF_Hash(node_vrf_private_key, last_hash)
-        # encode in base64
-        node_vrf_seed_b64 = base64.b64encode(node_vrf_seed).decode("utf-8")
-        print('DEBUG: aca antes de minar VDF generamos el seed VRF (y encodeamos en base64)!!:')
-        print(node_vrf_seed_b64)
+        # Calculate VDF Steps needed.
 
-        # Calcule VDF Steps needed.
+        # Adding VRF (WIP)
+        node_vrf_seed_b64 = self.vrf.get_seed_b64(last_hash)
+
         vdf_difficulty = self.vdf_steps(DEFAULT_DEBUG_STAKE, TOTAL_COINS, node_vrf_seed_b64)
-        print ('VDF Difficulty = %d' % vdf_difficulty)
+        print('VDF Difficulty = %d' % vdf_difficulty)
         
         print("DEBUG: Mining sequential VDF (Sloth) ...")
-        #nonce = vdf_execute(vdf_input_integer,node_vdf_steps) # VRF version
-        nonce = vdf_execute(vdf_input_integer,vdf_difficulty)
+        # nonce = vdf_execute(vdf_input_integer,node_vdf_steps) # VRF version
+        nonce = vdf_execute(vdf_input_integer, vdf_difficulty)
         print("DEBUG: Generated NONCE = %d" % nonce)
-        return nonce,node_vrf_seed_b64,self.get_vrf_public_key_pem() #, node_vrf_seed # with this
 
+        return nonce, node_vrf_seed_b64, self.vrf.get_pem_public_key()      # , node_vrf_seed # with this
 
-    def valid_proof(self, transactions, last_hash, nonce, miner_id, block_number, difficulty=MINING_DIFFICULTY, seed=None, miner_address=None):
+    def valid_proof(self, transactions, last_hash, nonce, block_number=None,
+                          difficulty=MINING_DIFFICULTY, seed=None, miner_address=None):
         """
         Check if a hash value satisfies the mining conditions. This function is used within the proof_of_work function.
         """
@@ -321,64 +235,75 @@ class Blockchain:
         if block_number == 1 and nonce == 0:
             return True
 
-        if not USE_PROOF_OF_TIME: # use Proof-of-Work
+        if not USE_PROOF_OF_TIME:   # use Proof-of-Work
             guess = (str(transactions)+str(last_hash)+str(nonce)).encode()
             guess_hash = hashlib.sha256(guess).hexdigest()
             return guess_hash[:difficulty] == '0'*difficulty
+
         else:
+            print('DEBUG: checking valid_proof()...')
 
-            print ('DEBUG: checking valid_proof()...')
+            if block_number is None:
+                raise ValueError('When using proof_of_time consensus block_number must have value.')
 
-            # Verify pseudorandom seed from miner with his publick key.
+            # Verify pseudorandom seed from miner with his public key.
             # Checking unique signature "seed" matches input "last_hash" if signed with private miner key.
-            print ('DEBUG: recieved VRF seed = %s' % seed)
-            seed_bytes = base64.b64decode(seed)
-            public_key_obj = self.get_vrf_public_key(pem=miner_address)
-            verified_vrf = self.VRF_Verify(public_key_obj,last_hash,seed_bytes)
-            print ('DEBUG: verifying VRF -> %s' % str(verified_vrf))
+            print('DEBUG: received VRF seed = %s' % seed)
 
-            # Checking VDF Difficuty for block.
-            # We should use the Miner Stake at the time of the validation.
+            k_fruta = 20
+            verified_vrf = self.vrf.verify(last_hash, seed, k_fruta, miner_address)
+            print('DEBUG: verifying VRF -> %s' % str(verified_vrf))
+
+            # Checking VDF Difficulty for block: we should use the Miner's Stake at the time of the validation.
             vdf_difficulty = self.vdf_steps(DEFAULT_DEBUG_STAKE, TOTAL_COINS, seed)
-            print ('VDF Difficulty = %d' % vdf_difficulty)
-            x = self.vdf_input(last_hash,miner_id)
-            t = vdf_difficulty #TIME_MINING_DIFFICULTY
-            print("DEBUG: Verifying VDF, Checking NONCE = %d" % nonce)
+            print('VDF Difficulty = %d' % vdf_difficulty)
+
             y = nonce
+            x = self.vdf_input(last_hash)
+            t = vdf_difficulty                                              # TIME_MINING_DIFFICULTY
+            print("DEBUG: Verifying VDF, Checking NONCE = %d" % nonce)
+
             verified_vdf = vdf_verify(y, x, t)
-            print ('DEBUG: verifying VDF -> %s' % str(verified_vdf))
+            print('DEBUG: verifying VDF -> %s' % str(verified_vdf))
             print("DEBUG: Valid Block = %s" % str(verified_vrf and verified_vdf))
 
             return verified_vrf and verified_vdf
 
-
-    def valid_chain(self, chain):
+    def valid_chain(self, chain: List[Dict[str, Union[str, slice]]]):
         """
-        check if a bockchain is valid
+        Check if a blockchain is valid
         """
         last_block = chain[0]
         current_index = 1
 
         while current_index < len(chain):
             block = chain[current_index]
-            #print(last_block)
-            #print(block)
-            #print("\n-----------\n")
+            # print(last_block)
+            # print(block)
+            # print("\n-----------\n")
             # Check that the hash of the block is correct
-            if block['previous_hash'] != self.hash(last_block):
+            if block['previous_hash'] != Blockchain.hash(last_block):
                 return False
 
             # Check that the Proof of Work is correct
-            #Delete the reward transaction
+            # Delete the reward transaction
             transactions = block['transactions'][:-1]
+
             # Need to make sure that the dictionary is ordered. Otherwise we'll get a different hash
             transaction_elements = ['sender_address', 'recipient_address', 'value']
-            transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in transactions]
+            transactions = \
+                [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in transactions]
 
-            print ('DEBUG: calling valid_proof() with block:')
-            print (str(block))
-            print ()
-            if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], block['miner_id'], block['block_number'], MINING_DIFFICULTY, block['seed'], block['miner_address']):
+            print('DEBUG: calling valid_proof() with block:')
+            print(str(block))
+            print()
+            if not self.valid_proof(transactions,
+                                    block['previous_hash'],
+                                    block['nonce'],
+                                    block['block_number'],
+                                    MINING_DIFFICULTY,
+                                    block['seed'],
+                                    block['miner_address']):
                 return False
 
             last_block = block
@@ -417,6 +342,37 @@ class Blockchain:
 
         return False
 
+    def vdf_input(self, last_hash):
+
+        print("DEBUG: TXs = %s" % str(self.transactions))
+        print("DEBUG: last_hash = %s" % str(last_hash))
+
+        vdf_input = (str(self.transactions) + str(last_hash)).encode()
+        vdf_input_hash = hashlib.sha256(vdf_input).hexdigest()
+        vdf_input_integer = int(vdf_input_hash, 16) % vdf_prime
+        print("DEBUG: vdf_input_integer = %d" % vdf_input_integer)
+        return vdf_input_integer  # , 0    # node_vrf_seed
+
+    def vdf_steps(self, coins, total, seed_b64):
+        seed_integer = self.vrf.os2ip(base64.b64decode(seed_b64))
+        return stakes.vdfStepsByStakeDiscreteProtected(coins, total, seed_integer)
+
+    def get_last_hash(self):
+        last_block = self.chain[-1]
+        last_hash = Blockchain.hash(last_block)
+        return last_hash
+
+    @classmethod
+    def hash(cls, block):
+        """
+        Create a SHA-256 hash of a block
+        """
+        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode()
+
+        return hashlib.sha256(block_string).hexdigest()
+
+
 # Instantiate the Node
 app = Flask(__name__)
 CORS(app)
@@ -424,14 +380,15 @@ CORS(app)
 # Instantiate the Blockchain
 blockchain = Blockchain()
 
+
 @app.route('/')
 def index():
     return render_template('./index.html')
 
+
 @app.route('/configure')
 def configure():
     return render_template('./configure.html')
-
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -443,22 +400,26 @@ def new_transaction():
     if not all(k in values for k in required):
         return 'Missing values', 400
     # Create a new Transaction
-    transaction_result = blockchain.submit_transaction(values['sender_address'], values['recipient_address'], values['amount'], values['signature'])
-
-    if transaction_result == False:
+    transaction_result = blockchain.submit_transaction(values['sender_address'],
+                                                       values['recipient_address'],
+                                                       values['amount'],
+                                                       values['signature'])
+    if not transaction_result:
         response = {'message': 'Invalid Transaction!'}
         return jsonify(response), 406
     else:
-        response = {'message': 'Transaction will be added to Block '+ str(transaction_result)}
+        response = {'message': 'Transaction will be added to Block %s' % str(transaction_result)}
         return jsonify(response), 201
+
 
 @app.route('/transactions/get', methods=['GET'])
 def get_transactions():
-    #Get transactions from transactions pool
+    # Get transactions from transactions pool
     transactions = blockchain.transactions
 
     response = {'transactions': transactions}
     return jsonify(response), 200
+
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
@@ -468,22 +429,26 @@ def full_chain():
     }
     return jsonify(response), 200
 
+
 @app.route('/mine', methods=['GET'])
 def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.chain[-1]
     if USE_PROOF_OF_TIME:
-        nonce,seed,miner_address = blockchain.proof_of_time()
+        nonce, seed, miner_address = blockchain.proof_of_time()
     else:
         nonce = blockchain.proof_of_work()
-        seed,miner_address = None,None
+        seed, miner_address = None, None
 
     # We must receive a reward for finding the proof.
-    blockchain.submit_transaction(sender_address=MINING_SENDER, recipient_address=blockchain.node_id, value=MINING_REWARD, signature="")
+    blockchain.submit_transaction(sender_address=MINING_SENDER,
+                                  recipient_address=blockchain.node_id,
+                                  value=MINING_REWARD,
+                                  signature="")
 
     # Forge the new Block by adding it to the chain
     previous_hash = blockchain.hash(last_block)
-    block = blockchain.create_block(nonce, previous_hash,seed,miner_address)
+    block = blockchain.create_append_block(nonce, previous_hash, seed, miner_address)
 
     response = {
         'message': "New Block Forged",
@@ -493,15 +458,14 @@ def mine():
         'previous_hash': block['previous_hash'],
     }
     if USE_PROOF_OF_TIME:
-        print ('DEBUG: adding miner seed to response: ')
-        print (str(block['seed']))
+        print('DEBUG: adding miner seed to response: ')
+        print(str(block['seed']))
         response['seed'] = block['seed']
-        print ('DEBUG: adding miner address to response: ')
-        print (str(block['miner_address']))
+        print('DEBUG: adding miner address to response: ')
+        print(str(block['miner_address']))
         response['miner_address'] = block['miner_address']
 
     return jsonify(response), 200
-
 
 
 @app.route('/nodes/register', methods=['POST'])
@@ -546,7 +510,6 @@ def get_nodes():
     return jsonify(response), 200
 
 
-
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
@@ -556,11 +519,3 @@ if __name__ == '__main__':
     port = args.port
 
     app.run(host='127.0.0.1', port=port)
-
-
-
-
-
-
-
-
