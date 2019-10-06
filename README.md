@@ -161,3 +161,5 @@ $ blabl apython
 [4] Implementing Algorand Agreement, https://nickgreenquist.github.io/blog/projects/2019/01/04/algorand.html
 [5] Cryptographic Sortition in Blockchains: the importance of VRFs https://medium.com/witnet/cryptographic-sortition-in-blockchains-the-importance-of-vrfs-ad5c20a4e018
 [6] What is the difference between signatures and VRF? https://crypto.stackexchange.com/questions/50681/what-is-the-difference-between-signatures-and-vrf
+[7] Block Gas Limits vs. Transactional Throughput: A Performance Analysis of the Ubiq Platform https://www.whiteblock.io/wp-content/uploads/2019/07/ubiq-report.pdf
+[8] Bobtail: Improved Blockchain Security with Low-Variance Mining https://arxiv.org/pdf/1709.08750.pdf
