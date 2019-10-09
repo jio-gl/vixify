@@ -21,7 +21,7 @@ To run a blockchain network of 2 interconnected nodes:
 The github repository contains a basic implementation of a blockchain and its client using Python. This blockchain has the following features:
 
 - Possibility of adding multiple nodes to the blockchain
-- Proof of Work (PoW)
+- Proof of Work (PoW) or Proof of Random Time (Vixify Consensus)
 - Simple conflict resolution between nodes
 - Transactions with RSA encryption
 
