@@ -509,6 +509,14 @@ def get_nodes():
     response = {'nodes': nodes}
     return jsonify(response), 200
 
+@app.route('/start', methods=['GET'])
+def start():
+    while True:
+        time.sleep(0.01)
+        consensus()
+        time.sleep(0.01)
+        mine()
+        time.sleep(0.01)
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
