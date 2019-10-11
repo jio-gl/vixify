@@ -163,3 +163,4 @@ $ blabl apython
 [6] What is the difference between signatures and VRF? https://crypto.stackexchange.com/questions/50681/what-is-the-difference-between-signatures-and-vrf
 [7] Block Gas Limits vs. Transactional Throughput: A Performance Analysis of the Ubiq Platform https://www.whiteblock.io/wp-content/uploads/2019/07/ubiq-report.pdf
 [8] Bobtail: Improved Blockchain Security with Low-Variance Mining https://arxiv.org/pdf/1709.08750.pdf
+[9] Announcing our Verifiable Random Function (VRF) Rust library https://medium.com/witnet/announcing-our-verifiable-random-function-vrf-rust-library-2e042c29a4f7
