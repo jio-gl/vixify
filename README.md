@@ -1,3 +1,5 @@
+![Vixify Logo](https://i.ibb.co/TgqJpvx/logo2-color-transp.png "Vixify Logo")
+
 # Vixify Blockchain
 
 A modern pure Proof-of-Stake blockchain based on a verifiable delay functions (VDF) and a verifiable random function (VRF). Implements a synthetic Proof-of-Work using the VDF and VRF based on coin stakes and non-parallelizable mining.
