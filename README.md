@@ -63,9 +63,20 @@ Notice that the overall structure is very similar but Vixify is more complex bec
 
 The important thing is that to generate the number of *T* steps of the VDF only use: a) the Previous Block Hash, b) the private key SK of the miner's wallet, and c) the stake *S* of the miner. In this way the only attack that the Miner can make is to generate many wallets and keys wanting to move the Stake to another wallet with another secret key SK. But that attack is very cumbersome. That is, when you find a SK that serves to trout something then you have to transfer the Stake to that wallet and looses the opportunity because he must put a transaction in the next block to move stake to the new wallet.
 
+
+
 ## Race Conditions: Shortest VDF chain
 
-In case of uncles (aka orphan or stale block) the network can decide which chain is the best one by comparing the sum of all VDF difficulties, then the chain with the smallest VDF total will be the winner.
+In case of uncles (aka orphan or stale block) the network can decide which chain is the best one by comparing the length of the chains. Comparing the sum of all VDF difficulties is not enought because a chain a similar or longer VDF difficulty total sum can be fabricated by a Byzantine node, but a lot of chained blocks is difficult to generate because you not only need the time to run VDF you also need to have more than one account with stake if you want to increase the chances of a successful atack.
+
+Summarizing: 
+
+ - Longest chain in number of blocks: Okey.
+ - Longest chain in total sum of VDF difficulty: Not good enough, an attacker maybe continue generating a branch where he is the winner in parallel and feed this bogus branch to network newcomers.
+ - Average VDF difficult per block: Not good enough, an attacker maybe split its stake into many account to test many branches and see if he can have a branch with low difficulty blocks.
+
+
+
 
 ## VDF linear-mining and the Fastest Chip or Winner-takes-all Attack Protection
 
