@@ -95,7 +95,7 @@ The same is difficult, you can't trick the blocktime pq much if you propagate so
 In theory you cannot assume synchrony but in practice you can assume some level of statistical synchrony and time delta.
 
 ```
-difficulty = slow-moving variable self-regulated by average block time.
+difficulty = slow-moving variable self-regulated by average block time (for example, miners can move this deterministically by 1% each block up or down).
 minerStake = current block # of coins stake of the miner address holding the coins
 stake = minerStake / totalCoins 
 slot = int(round(1/stake))
