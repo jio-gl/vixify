@@ -94,6 +94,16 @@ The issue is that the block time could lie a bit maybe, you decided it took mayb
 The same is difficult, you can't trick the blocktime pq much if you propagate something with timestamp of the future it would be an invalid block assuming clocks with a little bit of syncronia margin
 In theory you cannot assume synchrony but in practice you can assume some level of statistical synchrony and time delta.
 
+```
+difficulty = slow-moving variable self-regulated by average block time.
+minerStake = current block # of coins stake of the miner address holding the coins
+slotRange = the range of possible integer slots for a given miner holding stake on a given address from 0 to S[address].
+slotNumber = a deterministic slot number based for address or miner holding stake on a given blocknumber.
+vdfSteps = 2 ^ ( difficulty * slotNumber )
+```
+
+Notice that on changes of average block time, the vdf steps for each miner move exponentially. This is the Winner-takes-all Protection. A VDF winner can only used a tecnology advantage for a limited number of blocks. Let's say this winner has a 50% increase in VDF speed and can jump from slot `S` to slot `S-1`. Then if the average block time is reduced the vdf steps grows exponentially for all miners and the winner and every slot is penalized.
+
 For example we show 10 examples of VDF steps for a miner with a stake of 25% (25 from a total of 100 coins):
 
 ```
