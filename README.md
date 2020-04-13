@@ -97,9 +97,13 @@ In theory you cannot assume synchrony but in practice you can assume some level 
 ```
 difficulty = slow-moving variable self-regulated by average block time.
 minerStake = current block # of coins stake of the miner address holding the coins
-slotRange = the range of possible integer slots for a given miner holding stake on a given address from 0 to S[address].
-slotNumber = a deterministic slot number based for address or miner holding stake on a given blocknumber.
-vdfSteps = 2 ^ ( difficulty * slotNumber )
+stake = minerStake / totalCoins 
+slot = int(round(1/stake))
+miner_vrf_seed = vrf_sign( prev_block_hash, miner_private_key ).    # VRF is just a deterministic signature, bijective.
+random.set_seed(miner_vrf_seed)
+slotRange = [1:slot+1] # the range of possible integer slots for a given miner holding stake on a given address.
+slotNumber = random.random_integer_on_range(slotRange) # slotNumber = a deterministic slot number based for address or miner holding stake on a given blocknumber.
+vdfSteps = 2 ^ ( difficulty * slotNumber )   # this number is like the average mining time of traditional PoW.
 ```
 
 Notice that on changes of average block time, the vdf steps for each miner move exponentially. This is the Winner-takes-all Protection. A VDF winner can only used a tecnology advantage for a limited number of blocks. Let's say this winner has a 50% increase in VDF speed and can jump from slot `S` to slot `S-1`. Then if the average block time is reduced the vdf steps grows exponentially for all miners and the winner and every slot is penalized.
