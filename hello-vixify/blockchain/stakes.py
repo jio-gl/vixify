@@ -57,7 +57,7 @@ def oneRound(stakes):
     return aux[0][1]
 
 
-def manyRounds(stake, rounds=100000):
+def manyRounds(stakes, rounds=100000):
     results = []
     for _ in range(rounds):
         results.append( oneRound(stakes)[0] )
@@ -70,6 +70,7 @@ def manyRounds(stake, rounds=100000):
         else:
             newret.append( (k, float(0.0)/rounds ) )
     newret.sort(key=lambda x : x[0])
+    print(list(zip(stakes,newret)))
     return (newret)    
     
     
@@ -150,7 +151,7 @@ if __name__ == '__main__':
     
     for i in range(10):
         print ('-----')
-        stakes = genStakes(n=100)
+        stakes = genStakes(n=3)
         #stakes = genBinaryStakes2(n=64)
         print (stakes)
         print (experimentError(stakes))
