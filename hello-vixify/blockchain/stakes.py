@@ -70,7 +70,7 @@ def manyRounds(stakes, rounds=100000):
         else:
             newret.append( (k, float(0.0)/rounds ) )
     newret.sort(key=lambda x : x[0])
-    print(list(zip(stakes,newret)))
+    print( [ (a[1], b[1])for a,b in list(zip(stakes,newret))] )
     return (newret)    
     
     
